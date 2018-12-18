@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Aux from '../../../hoc/RXContainer'
-import Button from '../../../components/Button/Button';
+import Button from '../../../components/UI/Button/Button';
 
 const orderSummary = (props:any)=>{
     const ingredientSummary=Object.keys(props.ingredients)

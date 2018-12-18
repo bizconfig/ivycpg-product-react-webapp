@@ -4,7 +4,7 @@ import  Burger from '../../components/Burger/Burger'
 import Aux from '../../hoc/RXContainer'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
-import Modal from '../../components/Modal/Modal/Modal';
+import Modal from '../../components/UI/Modal/Modal';
 
 const INGREDIENT_PRICES:any={
     salad:10,
