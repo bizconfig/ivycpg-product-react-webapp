@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
 
 import  Burger from '../../components/Burger/Burger'
-import Aux from '../../hoc/RXContainer'
+import Aux from '../../hoc/AuxContainer/AuxContainer'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Modal from '../../components/UI/Modal/Modal';
+import axios from '../../Service/orders-service'
+import Spinner from '../../components/UI/Spinner/Spinner'
+import errorHandler from '../../hoc/ErrorHandler/ErrorHandler';
 
 const INGREDIENT_PRICES:any={
     salad:10,
@@ -22,7 +25,8 @@ public state:any={
     },
     totalPrice:0,
     purchasable:false,
-    purchasing:false
+    purchasing:false,
+    Loading:false
 }
 updatePurchaseState(ingredients:any){
    const sum=Object.keys(ingredients)
@@ -63,8 +67,28 @@ removeIngredientHandler=(type:string)=>{
     this.updatePurchaseState(updatedIngredients)
     }
 purchasingHandler=()=>{
-    debugger;
 this.setState({purchasing:true});
+}
+purchaseContinueHandler=()=>{
+    this.setState({Loading:true})
+    const order={
+        ingredients:this.state.ingredients,
+        price:this.state.totalPrice,
+        customer:{
+            name:'Rakesh',
+            address:{
+                street:'mgr nagar'
+            },
+            email:'rakeshswain1986@gmail.com'
+        }
+    }
+    axios.post('/order.json',order)
+    .then(
+        response=> this.setState({Loading:false, purchasing:false})
+        )
+    .catch(
+        error=>this.setState({Loading:false, purchasing:false})
+        );
 }
  public render() {
      const disabledInfo={
@@ -73,6 +97,14 @@ this.setState({purchasing:true});
      for(let key in disabledInfo)
      {
          disabledInfo[key]= disabledInfo[key]<=0;
+     }
+     let orderSummary=<OrderSummary 
+     continued={this.purchaseContinueHandler}  
+     ingredients={this.state.ingredients}/>
+
+     if(this.state.Loading)
+     {
+        orderSummary=<Spinner/>
      }
         return (
             <Aux>
@@ -84,10 +116,12 @@ this.setState({purchasing:true});
                 purchasable={this.state.purchasable}
                 totalPrice={this.state.totalPrice}
                 ordered={this.purchasingHandler}/>
-               <Modal show={this.state.purchasing}> <OrderSummary ingredients={this.state.ingredients}/></Modal>
+               <Modal show={this.state.purchasing}> 
+                 {orderSummary}
+               </Modal>
             </Aux>
         );
     }
 }
 
-export default BurgerBuilder;
+export default errorHandler(BurgerBuilder,axios);
